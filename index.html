@@ -180,134 +180,139 @@
 </footer>
 
 <script>
+    class ShoppingCart {
+      constructor(products) {
+        this.products = products;
+        this.cart = {};
+        this.productsContainer = document.getElementById("products");
+        this.cartCount = document.getElementById("cart-count");
+        this.cartButton = document.getElementById("cart-button");
+        this.cartModal = document.getElementById("cart-modal");
+        this.cartItemsList = document.getElementById("cart-items");
+        this.cartEmptyMsg = document.getElementById("cart-empty");
+        this.overlay = document.getElementById("overlay");
+        this.searchInput = document.getElementById("search-input");
+
+        this.init();
+      }
+
+      init() {
+        this.renderProducts();
+        this.updateCartCount();
+        this.attachEventListeners();
+      }
+
+      renderProducts(filter = "") {
+        this.productsContainer.innerHTML = "";
+        const filtered = this.products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+        if(filtered.length === 0) {
+          this.productsContainer.innerHTML = "<p>Keine Produkte gefunden.</p>";
+          return;
+        }
+        filtered.forEach(p => {
+          const productDiv = document.createElement("div");
+          productDiv.className = "product";
+          productDiv.innerHTML = `
+            <img src="${p.img}" alt="${p.name}">
+            <div class="product-name">${p.name}</div>
+            <div class="product-price">${p.price} €</div>
+            <button class="add-btn" data-id="${p.id}">In den Warenkorb</button>
+          `;
+          this.productsContainer.appendChild(productDiv);
+        });
+      }
+
+      updateCartCount() {
+        const totalItems = Object.values(this.cart).reduce((sum, item) => sum + item.qty, 0);
+        this.cartCount.textContent = totalItems;
+      }
+
+      renderCart() {
+        this.cartItemsList.innerHTML = "";
+        const keys = Object.keys(this.cart);
+        if(keys.length === 0) {
+          this.cartEmptyMsg.style.display = "block";
+          return;
+        }
+        this.cartEmptyMsg.style.display = "none";
+
+        keys.forEach(id => {
+          const item = this.cart[id];
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <span class="item-name">${item.name}</span>
+            <span class="item-qty">x${item.qty}</span>
+            <button class="remove-btn" data-id="${id}">&times;</button>
+          `;
+          this.cartItemsList.appendChild(li);
+        });
+      }
+
+      addToCart(id) {
+        const product = this.products.find(p => p.id === id);
+        if(!product) return;
+
+        if(this.cart[id]) {
+          this.cart[id].qty++;
+        } else {
+          this.cart[id] = { ...product, qty: 1 };
+        }
+        this.updateCartCount();
+      }
+
+      removeFromCart(id) {
+        if(!this.cart[id]) return;
+        this.cart[id].qty--;
+        if(this.cart[id].qty <= 0) {
+          delete this.cart[id];
+        }
+        this.updateCartCount();
+        this.renderCart();
+      }
+
+      attachEventListeners() {
+        this.productsContainer.addEventListener("click", e => {
+          if(e.target.classList.contains("add-btn")) {
+            const id = Number(e.target.dataset.id);
+            this.addToCart(id);
+          }
+        });
+
+        this.cartButton.addEventListener("click", () => {
+          if(this.cartModal.style.display === "block") {
+            this.cartModal.style.display = "none";
+            this.overlay.style.display = "none";
+          } else {
+            this.renderCart();
+            this.cartModal.style.display = "block";
+            this.overlay.style.display = "block";
+          }
+        });
+
+        this.overlay.addEventListener("click", () => {
+          this.cartModal.style.display = "none";
+          this.overlay.style.display = "none";
+        });
+
+        this.cartItemsList.addEventListener("click", e => {
+          if(e.target.classList.contains("remove-btn")) {
+            const id = Number(e.target.dataset.id);
+            this.removeFromCart(id);
+          }
+        });
+
+        this.searchInput.addEventListener("input", () => {
+          this.renderProducts(this.searchInput.value);
+        });
+      }
+    }
+
     const products = [
       { id: 1, name: "Angel", price: 1, img: "angel1.png" },
       { id: 2, name: "Köderfisch", price: 1, img: "köder1.png" }
     ];
 
-    let cart = {};
-
-    const productsContainer = document.getElementById("products");
-    const cartCount = document.getElementById("cart-count");
-    const cartButton = document.getElementById("cart-button");
-    const cartModal = document.getElementById("cart-modal");
-    const cartItemsList = document.getElementById("cart-items");
-    const cartEmptyMsg = document.getElementById("cart-empty");
-    const overlay = document.getElementById("overlay");
-    const searchInput = document.getElementById("search-input");
-
-    // Produkte anzeigen, mit Filter
-    function renderProducts(filter = "") {
-      productsContainer.innerHTML = "";
-      const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
-      if(filtered.length === 0) {
-        productsContainer.innerHTML = "<p>Keine Produkte gefunden.</p>";
-        return;
-      }
-      filtered.forEach(p => {
-        const productDiv = document.createElement("div");
-        productDiv.className = "product";
-        productDiv.innerHTML = `
-          <img src="${p.img}" alt="${p.name}">
-          <div class="product-name">${p.name}</div>
-          <div class="product-price">${p.price} €</div>
-          <button class="add-btn" data-id="${p.id}">In den Warenkorb</button>
-        `;
-        productsContainer.appendChild(productDiv);
-      });
-    }
-
-    // Warenkorb Zähler updaten
-    function updateCartCount() {
-      const totalItems = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
-      cartCount.textContent = totalItems;
-    }
-
-    // Warenkorb anzeigen
-    function renderCart() {
-      cartItemsList.innerHTML = "";
-      const keys = Object.keys(cart);
-      if(keys.length === 0) {
-        cartEmptyMsg.style.display = "block";
-        return;
-      }
-      cartEmptyMsg.style.display = "none";
-
-      keys.forEach(id => {
-        const item = cart[id];
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span class="item-name">${item.name}</span>
-          <span class="item-qty">x${item.qty}</span>
-          <button class="remove-btn" data-id="${id}">&times;</button>
-        `;
-        cartItemsList.appendChild(li);
-      });
-    }
-
-    // Produkt in den Warenkorb legen
-    function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      if(!product) return;
-
-      if(cart[id]) {
-        cart[id].qty++;
-      } else {
-        cart[id] = { ...product, qty: 1 };
-      }
-      updateCartCount();
-    }
-
-    // Produkt aus Warenkorb entfernen
-    function removeFromCart(id) {
-      if(!cart[id]) return;
-      cart[id].qty--;
-      if(cart[id].qty <= 0) {
-        delete cart[id];
-      }
-      updateCartCount();
-      renderCart();
-    }
-
-    // Event Listener
-    productsContainer.addEventListener("click", e => {
-      if(e.target.classList.contains("add-btn")) {
-        const id = Number(e.target.dataset.id);
-        addToCart(id);
-      }
-    });
-
-    cartButton.addEventListener("click", () => {
-      if(cartModal.style.display === "block") {
-        cartModal.style.display = "none";
-        overlay.style.display = "none";
-      } else {
-        renderCart();
-        cartModal.style.display = "block";
-        overlay.style.display = "block";
-      }
-    });
-
-    overlay.addEventListener("click", () => {
-      cartModal.style.display = "none";
-      overlay.style.display = "none";
-    });
-
-    cartItemsList.addEventListener("click", e => {
-      if(e.target.classList.contains("remove-btn")) {
-        const id = Number(e.target.dataset.id);
-        removeFromCart(id);
-      }
-    });
-
-    searchInput.addEventListener("input", () => {
-      renderProducts(searchInput.value);
-    });
-
-    // Start
-    renderProducts();
-    updateCartCount();
-
+    const shoppingCart = new ShoppingCart(products);
 </script>
 
 </body>
