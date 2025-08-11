@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Austria Fishing - Shop</title>
+    <title>Austria Fishing</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <nav>
-    <a href="index.html" class="nav-link" data-page="index.html">Shop</a>
-    <a href="infos.html" class="nav-link" data-page="infos.html">Infos</a>
-    <a href="impressum.html" class="nav-link" data-page="impressum.html">Impressum</a>
-    <a href="checkout.html" class="nav-link" data-page="checkout.html">Warenkorb</a>
-    <a href="login.html" class="nav-link" data-page="login.html">Login</a>
+    <a href="index.html">Shop</a>
+    <a href="infos.html">Infos</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="checkout.html">Warenkorb</a>
 </nav>
 
 <header>
     <h1>Austria Fishing</h1>
-    <button id="cart-button">Warenkorb <span id="cart-count">0</span></button>
+    <button id="cart-button">
+        Warenkorb <span id="cart-count">0</span>
+    </button>
 </header>
 
 <input type="text" id="search-input" placeholder="Produkte suchen..." />
@@ -26,17 +27,153 @@
 <section id="products"></section>
 
 <div id="overlay"></div>
+
 <div id="cart-modal">
     <h3>Warenkorb</h3>
     <ul id="cart-items"></ul>
     <p id="cart-empty">Dein Warenkorb ist leer.</p>
-    <a href="checkout.html" class="checkout-link">Zur Kasse</a>
 </div>
 
 <footer>
     <p>Gegründet von Fabian Danbauer und Oscar Haider</p>
 </footer>
 
-<script src="main.js"></script>
+<script>
+    class ShoppingCart {
+      constructor(products) {
+        this.products = products;
+        this.cart = {};
+        this.productsContainer = document.getElementById("products");
+        this.cartCount = document.getElementById("cart-count");
+        this.cartButton = document.getElementById("cart-button");
+        this.cartModal = document.getElementById("cart-modal");
+        this.cartItemsList = document.getElementById("cart-items");
+        this.cartEmptyMsg = document.getElementById("cart-empty");
+        this.overlay = document.getElementById("overlay");
+        this.searchInput = document.getElementById("search-input");
+    
+        this.init();
+      }
+    
+      init() {
+        this.renderProducts();
+        this.updateCartCount();
+        this.attachEventListeners();
+      }
+    
+      renderProducts(filter = "") {
+        this.productsContainer.innerHTML = "";
+        const filtered = this.products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+        if (filtered.length === 0) {
+          this.productsContainer.innerHTML = "<p>Keine Produkte gefunden.</p>";
+          return;
+        }
+        filtered.forEach(p => {
+          const productDiv = document.createElement("div");
+          productDiv.className = "product";
+          productDiv.innerHTML = `
+            <img src="${p.img}" alt="${p.name}" data-id="${p.id}">
+            <div class="product-name">${p.name}</div>
+            <div class="product-price">${p.price} €</div>
+            <button class="add-btn" data-id="${p.id}">In den Warenkorb</button>
+          `;
+          this.productsContainer.appendChild(productDiv);
+        });
+      }
+    
+      updateCartCount() {
+        const totalItems = Object.values(this.cart).reduce((sum, item) => sum + item.qty, 0);
+        this.cartCount.textContent = totalItems;
+      }
+    
+      renderCart() {
+        this.cartItemsList.innerHTML = "";
+        const keys = Object.keys(this.cart);
+        if (keys.length === 0) {
+          this.cartEmptyMsg.style.display = "block";
+          return;
+        }
+        this.cartEmptyMsg.style.display = "none";
+        keys.forEach(id => {
+          const item = this.cart[id];
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <span class="item-name">${item.name}</span>
+            <span class="item-qty">x${item.qty}</span>
+            <button class="remove-btn" data-id="${id}">&times;</button>
+          `;
+          this.cartItemsList.appendChild(li);
+        });
+      }
+    
+      addToCart(id) {
+        const product = this.products.find(p => p.id === id);
+        if (!product) return;
+        if (this.cart[id]) {
+          this.cart[id].qty++;
+        } else {
+          this.cart[id] = { ...product, qty: 1 };
+        }
+        this.updateCartCount();
+      }
+    
+      removeFromCart(id) {
+        if (!this.cart[id]) return;
+        this.cart[id].qty--;
+        if (this.cart[id].qty <= 0) {
+          delete this.cart[id];
+        }
+        this.updateCartCount();
+        this.renderCart();
+      }
+    
+      attachEventListeners() {
+        this.productsContainer.addEventListener("click", e => {
+          const id = Number(e.target.dataset.id);
+          if (e.target.tagName === "IMG") {
+            const product = this.products.find(p => p.id === id);
+            if (product) {
+              alert(product.info);
+            }
+          } else if (e.target.classList.contains("add-btn")) {
+            this.addToCart(id);
+          }
+        });
+    
+        this.cartButton.addEventListener("click", () => {
+          const isVisible = this.cartModal.style.display === "block";
+          this.cartModal.style.display = isVisible ? "none" : "block";
+          this.overlay.style.display = isVisible ? "none" : "block";
+          if (!isVisible) this.renderCart();
+        });
+    
+        this.overlay.addEventListener("click", () => {
+          this.cartModal.style.display = "none";
+          this.overlay.style.display = "none";
+        });
+    
+        this.cartItemsList.addEventListener("click", e => {
+          if (e.target.classList.contains("remove-btn")) {
+            const id = Number(e.target.dataset.id);
+            this.removeFromCart(id);
+          }
+        });
+    
+        this.searchInput.addEventListener("input", () => {
+          this.renderProducts(this.searchInput.value);
+        });
+      }
+    }
+    
+    const products = [
+      { id: 1, name: "Angel", price: 10, img: "angel1.png", info: "Teleskop-Rute für Anfänger & Profis." },
+      { id: 2, name: "Köderfisch", price: 2, img: "köder1.png", info: "Hechtköder – sehr fängig!" },
+      { id: 3, name: "Köder Deluxe", price: 3, img: "köder2.png", info: "Premium-Köder für große Fische." },
+      { id: 4, name: "Köder Mini", price: 1, img: "köder3.png", info: "Ideal für Forellen und kleine Raubfische." }
+    ];
+    
+    new ShoppingCart(products);
+</script>
+
 </body>
 </html>
