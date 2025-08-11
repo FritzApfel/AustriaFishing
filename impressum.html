@@ -26,27 +26,43 @@
     nav a {
       text-decoration: none;
       font-weight: bold;
-      color: black; /* Links schwarz */
+      color: black;
       font-size: 1.1em;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #007BFF;
     }
 
     h1 {
       margin-top: 0;
       color: black;
+      text-align: center;
     }
 
     p {
-      background-color: rgba(255, 255, 255, 0.7);
-      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 15px 20px;
       border-radius: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       color: black;
+      line-height: 1.5;
     }
 
     a {
-      color: black; /* Links im Text auch schwarz */
+      color: black;
       font-weight: bold;
       text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #007BFF;
+    }
+
+    .contact-info strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.2em;
     }
   </style>
 </head>
@@ -60,24 +76,26 @@
 
 <h1>Impressum</h1>
 
-<p><strong>Austria Fishing</strong></p>
+<div class="contact-info">
+  <p><strong>Austria Fishing</strong></p>
 
-<p>
-  Fabian Danbauer<br>
-  Alte Bundesstraße 108<br>
-  5350 Strobl<br>
-  Österreich
-</p>
+  <p>
+    Fabian Danbauer<br />
+    Alte Bundesstraße 108<br />
+    5350 Strobl<br />
+    Österreich
+  </p>
 
-<p>
-  Telefon: +43 676 531 8855<br>
-  E-Mail: austria.fishing.30@gmail.com
-</p>
+  <p>
+    Telefon: <a href="tel:+436765318855">+43 676 531 8855</a><br />
+    E-Mail: <a href="mailto:austria.fishing.30@gmail.com">austria.fishing.30@gmail.com</a>
+  </p>
 
-<p>
-  Verantwortlich für den Inhalt gemäß § 55 Abs. 2 RStV:<br>
-  Fabian Danbauer und Oscar Haider
-</p>
+  <p>
+    Verantwortlich für den Inhalt gemäß § 55 Abs. 2 RStV:<br />
+    Fabian Danbauer und Oscar Haider
+  </p>
+</div>
 
 <p><a href="index.html">← Zurück zur Startseite</a></p>
 
