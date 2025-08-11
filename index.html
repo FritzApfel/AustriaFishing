@@ -7,19 +7,35 @@
     <style>
         body {
           font-family: Arial, sans-serif;
-          background: #f0f4f8;
-          margin: 0; padding: 20px;
-          color: #333;
+          background: url('logo.png') no-repeat center center fixed;
+          background-size: cover;
+          margin: 0;
+          padding: 20px;
+          color: #fff;
+          backdrop-filter: blur(6px);
         }
+
+        nav {
+          display: flex;
+          gap: 20px;
+          justify-content: center;
+          margin-bottom: 20px;
+        }
+
+        nav a {
+          text-decoration: none;
+          font-weight: bold;
+          color: white;
+          font-size: 1.1em;
+        }
+
         header {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 20px;
         }
-        header h1 {
-          margin: 0;
-        }
+
         #cart-button {
           background-color: #007BFF;
           border: none;
@@ -30,6 +46,7 @@
           font-weight: bold;
           position: relative;
         }
+
         #cart-count {
           position: absolute;
           top: -8px;
@@ -45,6 +62,7 @@
           justify-content: center;
           align-items: center;
         }
+
         #search-input {
           width: 100%;
           max-width: 400px;
@@ -52,36 +70,45 @@
           font-size: 1em;
           border-radius: 25px;
           border: 2px solid #007BFF;
-          margin-bottom: 25px;
+          margin: 20px auto;
           outline: none;
+          display: block;
         }
+
         #products {
           display: grid;
           grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
           gap: 25px;
         }
+
         .product {
-          background: white;
+          background: rgba(255,255,255,0.9);
+          color: #000;
           border-radius: 12px;
-          box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
+          box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
           padding: 15px;
           text-align: center;
         }
+
         .product img {
           max-width: 150px;
           height: auto;
           margin-bottom: 12px;
+          cursor: pointer;
         }
+
         .product-name {
           font-weight: 700;
           margin-bottom: 8px;
           font-size: 1.1em;
         }
+
         .product-price {
           color: #007BFF;
           font-weight: 600;
           margin-bottom: 12px;
         }
+
         .add-btn {
           background-color: #007BFF;
           color: white;
@@ -92,9 +119,11 @@
           font-weight: bold;
           transition: background-color 0.3s ease;
         }
+
         .add-btn:hover {
           background-color: #0056b3;
         }
+
         #cart-modal {
           display: none;
           position: fixed;
@@ -104,22 +133,19 @@
           max-height: 400px;
           overflow-y: auto;
           background: white;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          color: black;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
           border-radius: 10px;
           padding: 20px;
           z-index: 1000;
         }
-        #cart-modal h3 {
-          margin-top: 0;
-          margin-bottom: 15px;
-          border-bottom: 1px solid #ddd;
-          padding-bottom: 8px;
-        }
+
         #cart-items {
           list-style: none;
           padding: 0;
           margin: 0;
         }
+
         #cart-items li {
           display: flex;
           justify-content: space-between;
@@ -127,13 +153,7 @@
           border-bottom: 1px solid #eee;
           padding-bottom: 6px;
         }
-        #cart-items .item-name {
-          flex-grow: 1;
-          text-align: left;
-        }
-        #cart-items .item-qty {
-          margin: 0 10px;
-        }
+
         #cart-items .remove-btn {
           background: transparent;
           border: none;
@@ -141,6 +161,7 @@
           font-weight: bold;
           cursor: pointer;
         }
+
         #overlay {
           display: none;
           position: fixed;
@@ -148,15 +169,22 @@
           background: rgba(0,0,0,0.4);
           z-index: 999;
         }
+
         footer {
           margin-top: 60px;
           font-size: 0.9em;
-          color: #777;
+          color: #ddd;
           text-align: center;
         }
     </style>
 </head>
 <body>
+
+<nav>
+    <a href="index.html">Shop</a>
+    <a href="infos.html">Infos</a>
+    <a href="impressum.html">Impressum</a>
+</nav>
 
 <header>
     <h1>Austria Fishing</h1>
@@ -167,7 +195,6 @@
 
 <section id="products"></section>
 
-<!-- Warenkorb Modal -->
 <div id="overlay"></div>
 <div id="cart-modal">
     <h3>Warenkorb</h3>
@@ -182,7 +209,7 @@
 <script>
     class ShoppingCart {
       constructor(products) {
-        this.products = products;
+        this.products = products.map(p => ({ ...p, unlocked: false }));
         this.cart = {};
         this.productsContainer = document.getElementById("products");
         this.cartCount = document.getElementById("cart-count");
@@ -205,7 +232,7 @@
       renderProducts(filter = "") {
         this.productsContainer.innerHTML = "";
         const filtered = this.products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
-        if(filtered.length === 0) {
+        if (filtered.length === 0) {
           this.productsContainer.innerHTML = "<p>Keine Produkte gefunden.</p>";
           return;
         }
@@ -213,10 +240,10 @@
           const productDiv = document.createElement("div");
           productDiv.className = "product";
           productDiv.innerHTML = `
-            <img src="${p.img}" alt="${p.name}">
+            <img src="${p.img}" alt="${p.name}" data-id="${p.id}">
             <div class="product-name">${p.name}</div>
             <div class="product-price">${p.price} €</div>
-            <button class="add-btn" data-id="${p.id}">In den Warenkorb</button>
+            <button class="add-btn" data-id="${p.id}" ${p.unlocked ? "" : "disabled"}>In den Warenkorb</button>
           `;
           this.productsContainer.appendChild(productDiv);
         });
@@ -230,12 +257,11 @@
       renderCart() {
         this.cartItemsList.innerHTML = "";
         const keys = Object.keys(this.cart);
-        if(keys.length === 0) {
+        if (keys.length === 0) {
           this.cartEmptyMsg.style.display = "block";
           return;
         }
         this.cartEmptyMsg.style.display = "none";
-
         keys.forEach(id => {
           const item = this.cart[id];
           const li = document.createElement("li");
@@ -250,9 +276,8 @@
 
       addToCart(id) {
         const product = this.products.find(p => p.id === id);
-        if(!product) return;
-
-        if(this.cart[id]) {
+        if (!product) return;
+        if (this.cart[id]) {
           this.cart[id].qty++;
         } else {
           this.cart[id] = { ...product, qty: 1 };
@@ -261,9 +286,9 @@
       }
 
       removeFromCart(id) {
-        if(!this.cart[id]) return;
+        if (!this.cart[id]) return;
         this.cart[id].qty--;
-        if(this.cart[id].qty <= 0) {
+        if (this.cart[id].qty <= 0) {
           delete this.cart[id];
         }
         this.updateCartCount();
@@ -272,21 +297,24 @@
 
       attachEventListeners() {
         this.productsContainer.addEventListener("click", e => {
-          if(e.target.classList.contains("add-btn")) {
-            const id = Number(e.target.dataset.id);
+          const id = Number(e.target.dataset.id);
+          if (e.target.tagName === "IMG") {
+            const product = this.products.find(p => p.id === id);
+            if (product) {
+              alert(product.info);
+              product.unlocked = true;
+              this.renderProducts(this.searchInput.value);
+            }
+          } else if (e.target.classList.contains("add-btn")) {
             this.addToCart(id);
           }
         });
 
         this.cartButton.addEventListener("click", () => {
-          if(this.cartModal.style.display === "block") {
-            this.cartModal.style.display = "none";
-            this.overlay.style.display = "none";
-          } else {
-            this.renderCart();
-            this.cartModal.style.display = "block";
-            this.overlay.style.display = "block";
-          }
+          const isVisible = this.cartModal.style.display === "block";
+          this.cartModal.style.display = isVisible ? "none" : "block";
+          this.overlay.style.display = isVisible ? "none" : "block";
+          if (!isVisible) this.renderCart();
         });
 
         this.overlay.addEventListener("click", () => {
@@ -295,7 +323,7 @@
         });
 
         this.cartItemsList.addEventListener("click", e => {
-          if(e.target.classList.contains("remove-btn")) {
+          if (e.target.classList.contains("remove-btn")) {
             const id = Number(e.target.dataset.id);
             this.removeFromCart(id);
           }
@@ -308,12 +336,13 @@
     }
 
     const products = [
-      { id: 1, name: "Angel", price: 1, img: "angel1.png" },
-      { id: 2, name: "Köderfisch", price: 1, img: "köder1.png" }
+      { id: 1, name: "Angel", price: 10, img: "angel1.png", info: "Teleskop-Rute für Anfänger & Profis." },
+      { id: 2, name: "Köderfisch", price: 2, img: "köder1.png", info: "Hechtköder – sehr fängig!" },
+      { id: 3, name: "Köder Deluxe", price: 3, img: "köder2.png", info: "Premium-Köder für große Fische." },
+      { id: 4, name: "Köder Mini", price: 1, img: "köder3.png", info: "Ideal für Forellen und kleine Raubfische." }
     ];
 
-    const shoppingCart = new ShoppingCart(products);
+    new ShoppingCart(products);
 </script>
-
 </body>
 </html>
