@@ -20,13 +20,6 @@ text-decoration: none;
 font-weight: bold;
 color: white;
 font-size: 1.1em;
-padding: 5px 10px;
-border-radius: 5px;
-}
-
-nav a.active {
-background: black;
-color: white;
 }
 
 header {
@@ -77,12 +70,12 @@ display: block;
 
 #products {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
 gap: 25px;
 }
 
 .product {
-background: rgba(255, 255, 255, 0.9);
+background: rgba(255,255,255,0.9);
 color: #000;
 border-radius: 12px;
 box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
@@ -134,7 +127,7 @@ max-height: 400px;
 overflow-y: auto;
 background: white;
 color: black;
-box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 border-radius: 10px;
 padding: 20px;
 z-index: 1000;
@@ -162,27 +155,11 @@ font-weight: bold;
 cursor: pointer;
 }
 
-.checkout-link {
-display: block;
-margin-top: 15px;
-background: #28a745;
-color: white;
-text-align: center;
-padding: 10px;
-border-radius: 20px;
-text-decoration: none;
-font-weight: bold;
-}
-
-.checkout-link:hover {
-background: #218838;
-}
-
 #overlay {
 display: none;
 position: fixed;
 top: 0; left: 0; right: 0; bottom: 0;
-background: rgba(0, 0, 0, 0.4);
+background: rgba(0,0,0,0.4);
 z-index: 999;
 }
 
