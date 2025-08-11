@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Warenkorb & Bezahlen</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    #cart-list {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    #cart-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    #cart-list li {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 200px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .total {
+      font-weight: bold;
+      font-size: 1.2em;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-link" data-page="index.html">Shop</a>
+  <a href="infos.html" class="nav-link" data-page="infos.html">Infos</a>
+  <a href="impressum.html" class="nav-link" data-page="impressum.html">Impressum</a>
+  <a href="checkout.html" class="nav-link" data-page="checkout.html">Warenkorb</a>
+</nav>
+
+<h1>Bezahlen</h1>
+
+<div id="cart-list">
+  <ul id="items"></ul>
+  <p class="total">Gesamt: <span id="total">0 €</span></p>
+
+  <input type="text" id="code" placeholder="Rabattcode eingeben..." />
+  <button onclick="applyDiscount()">Rabatt anwenden</button>
+</div>
+
+<script>
+  const items = JSON.parse(localStorage.getItem("cart") || "{}");
+  let total = 0;
+  const ul = document.getElementById("items");
+
+  Object.values(items).forEach(item => {
+    const li = document.createElement("li");
+    li.innerHTML = `${item.name} x${item.qty} <span>${(item.price * item.qty).toFixed(2)} €</span>`;
+    ul.appendChild(li);
+    total += item.price * item.qty;
+  });
+
+  let discounted = false;
+  function applyDiscount() {
+    const code = document.getElementById("code").value.trim().toLowerCase();
+    if (code === "summer1" && total >= 1 && !discounted) {
+      total = total * 0.9; // 10% Rabatt
+      discounted = true;
+      alert("Rabattcode angewendet! 10% Rabatt.");
+    } else if (discounted) {
+      alert("Rabatt wurde bereits angewendet.");
+    } else {
+      alert("Ungültiger oder nicht gültiger Rabattcode.");
+    }
+    document.getElementById("total").textContent = total.toFixed(2) + " €";
+  }
+
+  document.getElementById("total").textContent = total.toFixed(2) + " €";
+</script>
+
+<script>
+  // Aktiven Navigationslink setzen
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentPage = location.pathname.split("/").pop();
+    document.querySelectorAll(".nav-link").forEach(link => {
+      if (link.dataset.page === currentPage) {
+        link.classList.add("active");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
