@@ -23,6 +23,7 @@
       gap: 20px;
       justify-content: center;
       margin-bottom: 30px;
+      flex-wrap: wrap;
     }
 
     nav a {
@@ -32,6 +33,7 @@
       font-size: 1.1em;
       transition: color 0.3s;
     }
+
     nav a:hover {
       color: #007BFF;
     }
@@ -49,20 +51,6 @@
       margin-bottom: 20px;
       color: black;
       line-height: 1.5;
-    }
-
-    a.back {
-      display: block;
-      margin-top: 40px;
-      color: black;
-      text-align: center;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 1.1em;
-      transition: color 0.3s;
-    }
-    a.back:hover {
-      color: #007BFF;
     }
 
     #cart-button {
@@ -154,6 +142,8 @@
   <a href="index.html">Shop</a>
   <a href="infos.html">Infos</a>
   <a href="impressum.html">Impressum</a>
+  <a href="checkout.html">Warenkorb</a>
+  <a href="login.html">Anmelden / Registrieren</a>
 </nav>
 
 <h1>Informationen &amp; Rückgaberegeln</h1>
@@ -167,7 +157,8 @@
 </p>
 
 <p>
-  Bei Fragen zur Bestellung, Lieferung oder Rückgabe kannst du uns jederzeit kontaktieren: <a href="mailto:austria.fishing.30@gmail.com">austria.fishing.30@gmail.com</a>
+  Bei Fragen zur Bestellung, Lieferung oder Rückgabe kannst du uns jederzeit kontaktieren:
+  <a href="mailto:austria.fishing.30@gmail.com">austria.fishing.30@gmail.com</a>
 </p>
 
 <p>
@@ -177,8 +168,6 @@
 <p>
   Unsere Produkte sind mit größter Sorgfalt verpackt. Sollte es dennoch zu Transportschäden kommen, dokumentiere diese bitte und sende uns Fotos zur Reklamation.
 </p>
-
-<a href="index.html" class="back">← Zurück zum Shop</a>
 
 <button id="cart-button">
   Warenkorb <span id="cart-count">0</span>
