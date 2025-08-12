@@ -63,11 +63,11 @@
 
 <form onsubmit="login(event)">
   <input type="email" id="email" placeholder="E-Mail" required />
-  <input type="password" id="password" placeholder="Passwort" required />
+  <input type="password" id="password" placeholder="Passwort" required minlength="4" />
   <button type="submit">Anmelden</button>
 </form>
 
-<p>Kein Konto? <a href="register.html">Jetzt registrieren</a></p>
+<p>Noch kein Konto? <a href="register.html">Hier registrieren</a></p>
 
 <script>
   function login(e) {
@@ -77,15 +77,20 @@
 
     const users = JSON.parse(localStorage.getItem("users") || "{}");
 
-    if (!users[email] || users[email].password !== password) {
-      alert("E-Mail oder Passwort ist falsch.");
+    if (!users[email]) {
+      alert("E-Mail nicht gefunden. Bitte registrieren.");
       return;
     }
 
-    localStorage.setItem("userLoggedIn", "true");
-    localStorage.setItem("loggedInUser", email);
-    alert("Erfolgreich angemeldet!");
-    window.location.href = "index.html"; // oder z. B. checkout.html
+    if (users[email].password !== password) {
+      alert("Falsches Passwort.");
+      return;
+    }
+
+    // Login erfolgreich: Speichern Status im localStorage
+    localStorage.setItem("userLoggedIn", email);
+    alert("Login erfolgreich!");
+    window.location.href = "index.html";
   }
 </script>
 
