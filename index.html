@@ -12,7 +12,6 @@
           color: #222;
           max-width: 900px;
           margin: auto;
-          position: relative;
           min-height: 100vh;
         }
 
@@ -41,6 +40,7 @@
           font-size: 1.1em;
           transition: color 0.3s;
         }
+
         nav a:hover {
           color: #007BFF;
         }
@@ -54,14 +54,14 @@
 
         .products {
           display: grid;
-          grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
           gap: 25px;
         }
 
         .product {
           background: white;
           border-radius: 12px;
-          box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
           padding: 15px;
           text-align: center;
           display: flex;
@@ -101,90 +101,9 @@
           font-size: 1em;
           transition: background-color 0.3s;
         }
+
         button.add-to-cart:hover {
           background-color: #0056b3;
-        }
-
-        #cart-button {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background-color: #007BFF;
-          border: none;
-          color: white;
-          padding: 10px 18px;
-          border-radius: 25px;
-          cursor: pointer;
-          font-weight: bold;
-          z-index: 1100;
-        }
-
-        #cart-count {
-          position: absolute;
-          top: -8px;
-          right: -8px;
-          background: red;
-          color: white;
-          font-size: 0.8em;
-          font-weight: bold;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        #cart-modal {
-          display: none;
-          position: fixed;
-          top: 60px;
-          right: 20px;
-          width: 320px;
-          max-height: 400px;
-          overflow-y: auto;
-          background: white;
-          color: black;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-          border-radius: 10px;
-          padding: 20px;
-          z-index: 1101;
-        }
-
-        #cart-items {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-
-        #cart-items li {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 12px;
-          border-bottom: 1px solid #eee;
-          padding-bottom: 6px;
-        }
-
-        #cart-items .remove-btn {
-          background: transparent;
-          border: none;
-          color: red;
-          font-weight: bold;
-          cursor: pointer;
-        }
-
-        #cart-empty {
-          margin-top: 10px;
-          font-style: italic;
-          color: #555;
-        }
-
-        #overlay {
-          display: none;
-          position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.4);
-          z-index: 1100;
         }
     </style>
 </head>
@@ -198,24 +117,13 @@
     <a href="index.html">Shop</a>
     <a href="infos.html">Infos</a>
     <a href="impressum.html">Impressum</a>
+    <a href="checkout.html">Warenkorb</a> <!-- Warenkorb-Link in Navigation -->
 </nav>
 
 <h1>Unsere Produkte</h1>
 
 <div class="products" id="products-list">
-    <!-- Produkte per JS eingefügt -->
-</div>
-
-<button id="cart-button">
-    Warenkorb <span id="cart-count">0</span>
-</button>
-
-<div id="overlay"></div>
-
-<div id="cart-modal">
-    <h3>Warenkorb</h3>
-    <ul id="cart-items"></ul>
-    <p id="cart-empty">Dein Warenkorb ist leer.</p>
+    <!-- Produkte werden per JavaScript eingefügt -->
 </div>
 
 <script>
@@ -266,41 +174,8 @@
 
     class ShoppingCart {
       constructor() {
-        this.cart = {};
-        this.cartCount = document.getElementById('cart-count');
-        this.cartButton = document.getElementById('cart-button');
-        this.cartModal = document.getElementById('cart-modal');
-        this.cartItemsList = document.getElementById('cart-items');
-        this.cartEmptyMsg = document.getElementById('cart-empty');
-        this.overlay = document.getElementById('overlay');
-
+        this.cart = JSON.parse(localStorage.getItem("cart") || "{}");
         this.attachEventListeners();
-        this.updateCartCount();
-      }
-
-      updateCartCount() {
-        const totalItems = Object.values(this.cart).reduce((sum, item) => sum + item.qty, 0);
-        this.cartCount.textContent = totalItems;
-      }
-
-      renderCart() {
-        this.cartItemsList.innerHTML = '';
-        const keys = Object.keys(this.cart);
-        if (keys.length === 0) {
-          this.cartEmptyMsg.style.display = 'block';
-          return;
-        }
-        this.cartEmptyMsg.style.display = 'none';
-        keys.forEach(id => {
-          const item = this.cart[id];
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <span>${item.name}</span>
-            <span>x${item.qty}</span>
-            <button class="remove-btn" data-id="${id}">&times;</button>
-          `;
-          this.cartItemsList.appendChild(li);
-        });
       }
 
       addToCart(id) {
@@ -311,48 +186,15 @@
         } else {
           this.cart[id].qty++;
         }
-        this.updateCartCount();
-        this.renderCart();
-      }
-
-      removeFromCart(id) {
-        if (!this.cart[id]) return;
-        this.cart[id].qty--;
-        if (this.cart[id].qty <= 0) {
-          delete this.cart[id];
-        }
-        this.updateCartCount();
-        this.renderCart();
+        localStorage.setItem("cart", JSON.stringify(this.cart));
+        alert(`${product.name} wurde zum Warenkorb hinzugefügt.`);
       }
 
       attachEventListeners() {
-        this.cartButton.addEventListener('click', () => {
-          if (this.cartModal.style.display === 'block') {
-            this.cartModal.style.display = 'none';
-            this.overlay.style.display = 'none';
-          } else {
-            this.cartModal.style.display = 'block';
-            this.overlay.style.display = 'block';
-            this.renderCart();
-          }
-        });
-
-        this.overlay.addEventListener('click', () => {
-          this.cartModal.style.display = 'none';
-          this.overlay.style.display = 'none';
-        });
-
-        productsList.addEventListener('click', e => {
+        document.querySelector('.products').addEventListener('click', e => {
           if (e.target.classList.contains('add-to-cart')) {
             const id = e.target.getAttribute('data-id');
             this.addToCart(id);
-          }
-        });
-
-        this.cartItemsList.addEventListener('click', e => {
-          if (e.target.classList.contains('remove-btn')) {
-            const id = e.target.getAttribute('data-id');
-            this.removeFromCart(id);
           }
         });
       }
