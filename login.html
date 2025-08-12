@@ -110,8 +110,10 @@
       return;
     }
 
-    // Erfolgreich
-    localStorage.setItem("userLoggedIn", email);
+    // Erfolgreich eingeloggt: speichere Login-Status als "true" und Email separat
+    localStorage.setItem("userLoggedIn", "true");
+    localStorage.setItem("userEmail", email);
+
     messageEl.textContent = "Login erfolgreich! Weiterleitung...";
     messageEl.className = "success";
 
@@ -123,4 +125,3 @@
 
 </body>
 </html>
-
