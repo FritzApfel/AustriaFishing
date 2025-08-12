@@ -1,357 +1,183 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shop mit Warenkorb – Austria Fishing</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: url('logo.png') no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      padding: 20px;
-      color: #222;
-      backdrop-filter: blur(6px);
-    }
+body {
+font-family: Arial, sans-serif;
+background: url('logo.png') no-repeat center center fixed;
+background-size: cover;
+margin: 0;
+padding: 20px;
+color: #222;
+backdrop-filter: blur(6px);
+}
 
-    nav {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+nav {
+display: flex;
+gap: 20px;
+justify-content: center;
+margin-bottom: 20px;
+}
 
-    nav a {
-      text-decoration: none;
-      font-weight: bold;
-      color: white;
-      font-size: 1.1em;
-    }
+nav a {
+text-decoration: none;
+font-weight: bold;
+color: white;
+font-size: 1.1em;
+}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
 
-    #cart-button {
-      background-color: #007BFF;
-      border: none;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: bold;
-      position: relative;
-    }
+#cart-button {
+background-color: #007BFF;
+border: none;
+color: white;
+padding: 10px 18px;
+border-radius: 25px;
+cursor: pointer;
+font-weight: bold;
+position: relative;
+}
 
-    #cart-count {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: red;
-      color: white;
-      font-size: 0.8em;
-      font-weight: bold;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+#cart-count {
+position: absolute;
+top: -8px;
+right: -8px;
+background: red;
+color: white;
+font-size: 0.8em;
+font-weight: bold;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
 
-    #products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-      gap: 25px;
-    }
+#search-input {
+width: 100%;
+max-width: 400px;
+padding: 10px 15px;
+font-size: 1em;
+border-radius: 25px;
+border: 2px solid #007BFF;
+margin: 20px auto;
+outline: none;
+display: block;
+}
 
-    .product {
-      background: rgba(255,255,255,0.9);
-      color: #000;
-      border-radius: 12px;
-      box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-      padding: 15px;
-      text-align: center;
-    }
+#products {
+display: grid;
+grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+gap: 25px;
+}
 
-    .product img {
-      max-width: 120px;
-      height: auto;
-      margin-bottom: 12px;
-      cursor: pointer;
-    }
+.product {
+background: rgba(255,255,255,0.9);
+color: #000;
+border-radius: 12px;
+box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+padding: 15px;
+text-align: center;
+}
 
-    .product-name {
-      font-weight: 700;
-      margin-bottom: 8px;
-      font-size: 1.1em;
-    }
+.product img {
+max-width: 120px;
+height: auto;
+margin-bottom: 12px;
+cursor: pointer;
+}
 
-    .product-price {
-      color: #007BFF;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
+.product-name {
+font-weight: 700;
+margin-bottom: 8px;
+font-size: 1.1em;
+}
 
-    .add-btn {
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
+.product-price {
+color: #007BFF;
+font-weight: 600;
+margin-bottom: 12px;
+}
 
-    .add-btn:hover {
-      background-color: #0056b3;
-    }
+.add-btn {
+background-color: #007BFF;
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 25px;
+cursor: pointer;
+font-weight: bold;
+transition: background-color 0.3s ease;
+}
 
-    /* Warenkorb Modal */
-    #cart-modal {
-      display: none;
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      width: 320px;
-      max-height: 400px;
-      overflow-y: auto;
-      background: white;
-      color: black;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      border-radius: 10px;
-      padding: 20px;
-      z-index: 1000;
-    }
+.add-btn:hover {
+background-color: #0056b3;
+}
 
-    #cart-modal h2 {
-      margin-top: 0;
-    }
+#cart-modal {
+display: none;
+position: fixed;
+top: 80px;
+right: 20px;
+width: 320px;
+max-height: 400px;
+overflow-y: auto;
+background: white;
+color: black;
+box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+border-radius: 10px;
+padding: 20px;
+z-index: 1000;
+}
 
-    #cart-items {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+#cart-items {
+list-style: none;
+padding: 0;
+margin: 0;
+}
 
-    #cart-items li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 6px;
-    }
+#cart-items li {
+display: flex;
+justify-content: space-between;
+margin-bottom: 12px;
+border-bottom: 1px solid #eee;
+padding-bottom: 6px;
+}
 
-    #cart-items li span {
-      font-weight: bold;
-    }
+#cart-items .remove-btn {
+background: transparent;
+border: none;
+color: red;
+font-weight: bold;
+cursor: pointer;
+}
 
-    #cart-items .remove-btn {
-      background: transparent;
-      border: none;
-      color: red;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1.3em;
-      line-height: 1;
-      padding: 0 6px;
-      user-select: none;
-      transition: color 0.3s;
-    }
+#overlay {
+display: none;
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+background: rgba(0,0,0,0.4);
+z-index: 999;
+}
 
-    #cart-items .remove-btn:hover {
-      color: darkred;
-    }
+footer {
+margin-top: 60px;
+font-size: 0.9em;
+color: #222;
+text-align: center;
+}
+/* === Mobile Navigation Fix === */
+@media (max-width: 600px) {
+nav {
+flex-wrap: wrap;
+}
 
-    #overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 999;
-    }
-
-    #cart-total {
-      font-weight: bold;
-      text-align: right;
-      margin-top: 15px;
-      font-size: 1.2em;
-    }
-
-    #checkout-btn {
-      margin-top: 15px;
-      width: 100%;
-      background: #007BFF;
-      color: white;
-      border: none;
-      padding: 12px 0;
-      border-radius: 25px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1em;
-      transition: background-color 0.3s ease;
-    }
-
-    #checkout-btn:disabled {
-      background: #cccccc;
-      cursor: not-allowed;
-    }
-
-    #checkout-btn:hover:not(:disabled) {
-      background-color: #0056b3;
-    }
-
-  </style>
-</head>
-<body>
-
-<nav>
-  <a href="index.html">Shop</a>
-  <a href="infos.html">Infos</a>
-  <a href="impressum.html">Impressum</a>
-  <a href="checkout.html">Warenkorb</a>
-  <a href="login.html">Anmelden / Registrieren</a>
-</nav>
-
-<header>
-  <button id="cart-button">
-    Warenkorb <span id="cart-count">0</span>
-  </button>
-</header>
-
-<div id="overlay"></div>
-
-<div id="cart-modal">
-  <h2>Warenkorb</h2>
-  <ul id="cart-items"></ul>
-  <p id="cart-total">Gesamt: 0 €</p>
-  <button id="checkout-btn" disabled>Zur Kasse</button>
-</div>
-
-<!-- Beispielprodukte -->
-<div id="products">
-  <div class="product" data-id="1" data-name="Angelrute" data-price="59.99">
-    <img src="angelrute.jpg" alt="Angelrute" />
-    <div class="product-name">Angelrute</div>
-    <div class="product-price">59,99 €</div>
-    <button class="add-btn">In den Warenkorb</button>
-  </div>
-  <div class="product" data-id="2" data-name="Angelrolle" data-price="79.99">
-    <img src="angelrolle.jpg" alt="Angelrolle" />
-    <div class="product-name">Angelrolle</div>
-    <div class="product-price">79,99 €</div>
-    <button class="add-btn">In den Warenkorb</button>
-  </div>
-  <!-- Mehr Produkte hier -->
-</div>
-
-<script>
-  const cartButton = document.getElementById("cart-button");
-  const cartModal = document.getElementById("cart-modal");
-  const overlay = document.getElementById("overlay");
-  const cartItemsList = document.getElementById("cart-items");
-  const cartCount = document.getElementById("cart-count");
-  const cartTotal = document.getElementById("cart-total");
-  const checkoutBtn = document.getElementById("checkout-btn");
-
-  // Warenkorb-Daten aus localStorage laden (oder leeres Objekt)
-  let cart = JSON.parse(localStorage.getItem("cart") || "{}");
-
-  // Warenkorb rendern
-  function renderCart() {
-    cartItemsList.innerHTML = "";
-    let total = 0;
-    let count = 0;
-
-    for (const id in cart) {
-      const item = cart[id];
-      const li = document.createElement("li");
-      li.innerHTML = `
-        ${item.name} x${item.qty}
-        <span>${(item.price * item.qty).toFixed(2)} €</span>
-        <button class="remove-btn" data-id="${id}" aria-label="Artikel löschen">&times;</button>
-      `;
-      cartItemsList.appendChild(li);
-      total += item.price * item.qty;
-      count += item.qty;
-    }
-
-    if (count === 0) {
-      cartItemsList.innerHTML = "<li>Ihr Warenkorb ist leer.</li>";
-      checkoutBtn.disabled = true;
-    } else {
-      checkoutBtn.disabled = false;
-    }
-
-    cartCount.textContent = count;
-    cartTotal.textContent = `Gesamt: ${total.toFixed(2)} €`;
-
-    // localStorage aktualisieren
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }
-
-  // Artikel löschen aus Warenkorb
-  cartItemsList.addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-btn")) {
-      const id = e.target.getAttribute("data-id");
-      delete cart[id];
-      renderCart();
-    }
-  });
-
-  // Warenkorb öffnen
-  cartButton.addEventListener("click", () => {
-    cartModal.style.display = "block";
-    overlay.style.display = "block";
-  });
-
-  // Warenkorb schließen
-  overlay.addEventListener("click", () => {
-    cartModal.style.display = "none";
-    overlay.style.display = "none";
-  });
-
-  // Produkte hinzufügen
-  document.querySelectorAll(".add-btn").forEach(button => {
-    button.addEventListener("click", () => {
-      const product = button.closest(".product");
-      const id = product.getAttribute("data-id");
-      const name = product.getAttribute("data-name");
-      const price = parseFloat(product.getAttribute("data-price"));
-
-      if (cart[id]) {
-        cart[id].qty += 1;
-      } else {
-        cart[id] = { name, price, qty: 1 };
-      }
-
-      renderCart();
-      alert(`"${name}" wurde zum Warenkorb hinzugefügt.`);
-    });
-  });
-
-  // Checkout-Button
-  checkoutBtn.addEventListener("click", () => {
-    if (Object.keys(cart).length === 0) {
-      alert("Ihr Warenkorb ist leer.");
-      return;
-    }
-    alert("Vielen Dank für Ihren Einkauf!");
-    cart = {};
-    renderCart();
-    cartModal.style.display = "none";
-    overlay.style.display = "none";
-  });
-
-  // Initiales Rendering
-  renderCart();
-</script>
-
-</body>
-</html>
+nav a:last-child {
+width: 100%;
+text-align: center;
+margin-top: 10px;
+}
+}
