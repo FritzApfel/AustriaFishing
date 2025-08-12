@@ -24,6 +24,7 @@
       background: rgba(255,255,255,0.9);
       padding: 20px;
       border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     input {
@@ -33,6 +34,7 @@
       margin-bottom: 15px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 1em;
     }
 
     button {
@@ -44,6 +46,11 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background-color: #0056b3;
     }
 
     p {
@@ -54,6 +61,17 @@
     a {
       color: #007BFF;
       text-decoration: none;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+      color: red;
+    }
+
+    #message.success {
+      color: green;
     }
   </style>
 </head>
@@ -67,6 +85,8 @@
   <button type="submit">Anmelden</button>
 </form>
 
+<div id="message"></div>
+
 <p>Noch kein Konto? <a href="register.html">Hier registrieren</a></p>
 
 <script>
@@ -74,23 +94,30 @@
     e.preventDefault();
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
+    const messageEl = document.getElementById("message");
 
     const users = JSON.parse(localStorage.getItem("users") || "{}");
 
     if (!users[email]) {
-      alert("E-Mail nicht gefunden. Bitte registrieren.");
+      messageEl.textContent = "E-Mail nicht gefunden. Bitte registrieren.";
+      messageEl.className = "";
       return;
     }
 
     if (users[email].password !== password) {
-      alert("Falsches Passwort.");
+      messageEl.textContent = "Falsches Passwort.";
+      messageEl.className = "";
       return;
     }
 
-    // Login erfolgreich: Speichern Status im localStorage
+    // Erfolgreich
     localStorage.setItem("userLoggedIn", email);
-    alert("Login erfolgreich!");
-    window.location.href = "index.html";
+    messageEl.textContent = "Login erfolgreich! Weiterleitung...";
+    messageEl.className = "success";
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1500);
   }
 </script>
 
