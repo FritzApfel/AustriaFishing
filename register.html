@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registrieren – Austria Fishing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('logo.png') no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: blur(6px);
+      padding: 40px 20px;
+      color: black;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    form {
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    a {
+      color: #007BFF;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Registrieren</h1>
+
+<form onsubmit="register(event)">
+  <input type="email" id="email" placeholder="E-Mail" required />
+  <input type="password" id="password" placeholder="Passwort" required minlength="4" />
+  <button type="submit">Konto erstellen</button>
+</form>
+
+<p>Schon registriert? <a href="login.html">Hier anmelden</a></p>
+
+<script>
+  function register(e) {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (users[email]) {
+      alert("E-Mail ist bereits registriert.");
+      return;
+    }
+
+    users[email] = { password };
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Registrierung erfolgreich!");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>
