@@ -58,10 +58,32 @@
     #cart-list li {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 10px;
       border-bottom: 1px solid #eee;
       padding-bottom: 8px;
       color: black;
+    }
+
+    #cart-list li span.price {
+      margin-left: auto;
+      margin-right: 15px;
+      font-weight: bold;
+    }
+
+    #cart-list button.delete-item {
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 5px 10px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    #cart-list button.delete-item:hover {
+      background-color: #cc0000;
     }
 
     .total {
@@ -129,27 +151,54 @@
 </div>
 
 <script>
-  const items = JSON.parse(localStorage.getItem("cart") || "{}");
+  let items = JSON.parse(localStorage.getItem("cart") || "{}");
   const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
 
   let total = 0;
   let discounted = false;
   const ul = document.getElementById("items");
+  const totalEl = document.getElementById("total");
+  const discountSection = document.getElementById("discount-section");
+  const loginWarning = document.getElementById("login-warning");
 
-  Object.values(items).forEach(item => {
-    const li = document.createElement("li");
-    li.innerHTML = `${item.name} x${item.qty} <span>${(item.price * item.qty).toFixed(2)} €</span>`;
-    ul.appendChild(li);
-    total += item.price * item.qty;
-  });
-
-  document.getElementById("total").textContent = total.toFixed(2) + " €";
-
-  if (isLoggedIn) {
-    document.getElementById("discount-section").style.display = "block";
-  } else {
-    document.getElementById("login-warning").style.display = "block";
+  function renderCart() {
+    ul.innerHTML = "";
+    total = 0;
+    for (const id in items) {
+      const item = items[id];
+      const li = document.createElement("li");
+      li.innerHTML = `
+        ${item.name} x${item.qty}
+        <span class="price">${(item.price * item.qty).toFixed(2)} €</span>
+        <button class="delete-item" data-id="${id}">Löschen</button>
+      `;
+      ul.appendChild(li);
+      total += item.price * item.qty;
+    }
+    totalEl.textContent = total.toFixed(2) + " €";
+    // Falls keine Artikel drin sind:
+    if (Object.keys(items).length === 0) {
+      ul.innerHTML = "<li>Ihr Warenkorb ist leer.</li>";
+      discountSection.style.display = "none";
+    } else if (isLoggedIn) {
+      discountSection.style.display = "block";
+    }
   }
+
+  function deleteItem(id) {
+    if (items[id]) {
+      delete items[id];
+      localStorage.setItem("cart", JSON.stringify(items));
+      renderCart();
+    }
+  }
+
+  ul.addEventListener("click", (e) => {
+    if (e.target.classList.contains("delete-item")) {
+      const id = e.target.getAttribute("data-id");
+      deleteItem(id);
+    }
+  });
 
   function applyDiscount() {
     const code = document.getElementById("code").value.trim().toLowerCase();
@@ -162,14 +211,29 @@
     } else {
       alert("Ungültiger Rabattcode.");
     }
-    document.getElementById("total").textContent = total.toFixed(2) + " €";
+    totalEl.textContent = total.toFixed(2) + " €";
   }
 
   function checkout() {
+    if (Object.keys(items).length === 0) {
+      alert("Ihr Warenkorb ist leer.");
+      return;
+    }
     alert("Vielen Dank für Ihren Einkauf!");
     localStorage.removeItem("cart");
     window.location.href = "index.html";
   }
+
+  // Initiales Rendering
+  if (isLoggedIn) {
+    discountSection.style.display = "block";
+    loginWarning.style.display = "none";
+  } else {
+    discountSection.style.display = "none";
+    loginWarning.style.display = "block";
+  }
+
+  renderCart();
 </script>
 
 </body>
