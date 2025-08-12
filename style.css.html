@@ -28,26 +28,11 @@
 
         nav {
           display: flex;
-          justify-content: space-between;
+          gap: 20px;
+          justify-content: center;
+          margin-bottom: 40px;
           align-items: center;
           flex-wrap: wrap;
-          margin-bottom: 40px;
-          gap: 20px;
-          max-width: 900px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        nav .nav-left {
-          display: flex;
-          gap: 20px;
-          align-items: center;
-        }
-
-        nav .nav-right {
-          display: flex;
-          align-items: center;
-          gap: 10px;
         }
 
         nav a {
@@ -60,6 +45,13 @@
 
         nav a:hover {
           color: #007BFF;
+        }
+
+        nav span {
+          font-weight: bold;
+          color: #222;
+          font-size: 1.1em;
+          margin-right: 10px;
         }
 
         nav button {
@@ -138,19 +130,6 @@
         button.add-to-cart:hover {
           background-color: #0056b3;
         }
-
-        /* Responsive Navigation */
-        @media (max-width: 600px) {
-          nav {
-            flex-direction: column;
-            align-items: center;
-          }
-          nav .nav-left, nav .nav-right {
-            flex-direction: row;
-            gap: 15px;
-            margin: 5px 0;
-          }
-        }
     </style>
 </head>
 <body>
@@ -159,16 +138,13 @@
     <img src="logo.png" alt="Austria Fishing Logo" />
 </header>
 
+<!-- ✅ Navigation mit allen Links in einer Leiste -->
 <nav id="navbar">
-    <div class="nav-left">
-        <a href="index.html">Shop</a>
-        <a href="infos.html">Infos</a>
-        <a href="impressum.html">Impressum</a>
-        <a href="checkout.html">Warenkorb</a>
-    </div>
-    <div class="nav-right">
-        <a href="login.html" id="login-link">Anmelden / Registrieren</a>
-    </div>
+    <a href="index.html">Shop</a>
+    <a href="infos.html">Infos</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="checkout.html">Warenkorb</a>
+    <a href="login.html" id="login-link">Anmelden / Registrieren</a>
 </nav>
 
 <h1>Unsere Produkte</h1>
@@ -253,29 +229,27 @@
 
     const shoppingCart = new ShoppingCart();
 
-    // Login Status Navbar-Update
+    // Navbar-Update je nach Login-Status
     function updateNavbar() {
+      const navbar = document.getElementById('navbar');
       const loginLink = document.getElementById('login-link');
-      const navRight = document.querySelector('nav .nav-right');
       const loggedInUser = localStorage.getItem("userLoggedIn");
 
       if (loggedInUser) {
         loginLink.style.display = 'none';
 
-        // Entferne alte Elemente falls vorhanden
         const existingSpan = document.getElementById('user-email-span');
         const existingLogoutBtn = document.getElementById('logout-btn');
         if (existingSpan) existingSpan.remove();
         if (existingLogoutBtn) existingLogoutBtn.remove();
 
-        // Angemeldet-Text
         const userSpan = document.createElement('span');
         userSpan.id = 'user-email-span';
         userSpan.textContent = `Angemeldet als ${loggedInUser}`;
+        userSpan.style.marginLeft = '10px';
+        userSpan.style.marginRight = '10px';
         userSpan.style.color = '#222';
-        userSpan.style.fontWeight = 'bold';
 
-        // Logout Button
         const logoutBtn = document.createElement('button');
         logoutBtn.id = 'logout-btn';
         logoutBtn.textContent = 'Abmelden';
@@ -285,9 +259,8 @@
           location.reload();
         });
 
-        navRight.appendChild(userSpan);
-        navRight.appendChild(logoutBtn);
-
+        navbar.appendChild(userSpan);
+        navbar.appendChild(logoutBtn);
       } else {
         loginLink.style.display = 'inline';
         const existingSpan = document.getElementById('user-email-span');
