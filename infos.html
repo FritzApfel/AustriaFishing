@@ -14,7 +14,6 @@
       backdrop-filter: blur(6px);
       max-width: 800px;
       margin: auto;
-      position: relative;
       min-height: 100vh;
     }
 
@@ -40,99 +39,16 @@
 
     h1 {
       color: black;
-      margin-top: 0;
       text-align: center;
     }
 
     p {
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.85);
       padding: 15px 20px;
       border-radius: 10px;
       margin-bottom: 20px;
       color: black;
-      line-height: 1.5;
-    }
-
-    #cart-button {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #007BFF;
-      border: none;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: bold;
-      z-index: 1100;
-    }
-
-    #cart-count {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: red;
-      color: white;
-      font-size: 0.8em;
-      font-weight: bold;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #cart-modal {
-      display: none;
-      position: fixed;
-      top: 60px;
-      right: 20px;
-      width: 320px;
-      max-height: 400px;
-      overflow-y: auto;
-      background: white;
-      color: black;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      border-radius: 10px;
-      padding: 20px;
-      z-index: 1101;
-    }
-
-    #cart-items {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    #cart-items li {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 6px;
-    }
-
-    #cart-items .remove-btn {
-      background: transparent;
-      border: none;
-      color: red;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #cart-empty {
-      margin-top: 10px;
-      font-style: italic;
-      color: #555;
-    }
-
-    #overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 1100;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -146,7 +62,7 @@
   <a href="login.html">Anmelden / Registrieren</a>
 </nav>
 
-<h1>Informationen &amp; Rückgaberegeln</h1>
+<h1>Informationen & Rückgaberegeln</h1>
 
 <p>
   Bei beschädigten Paketen übernehmen wir selbstverständlich die Rücksendung. Bitte sende uns innerhalb von 7 Tagen nach Erhalt ein Foto des Paketinhalts an unsere E-Mail-Adresse.
@@ -168,92 +84,6 @@
 <p>
   Unsere Produkte sind mit größter Sorgfalt verpackt. Sollte es dennoch zu Transportschäden kommen, dokumentiere diese bitte und sende uns Fotos zur Reklamation.
 </p>
-
-<button id="cart-button">
-  Warenkorb <span id="cart-count">0</span>
-</button>
-
-<div id="overlay"></div>
-<div id="cart-modal">
-  <h3>Warenkorb</h3>
-  <ul id="cart-items"></ul>
-  <p id="cart-empty">Dein Warenkorb ist leer.</p>
-</div>
-
-<script>
-  class ShoppingCart {
-    constructor() {
-      this.cart = {};
-      this.cartCount = document.getElementById('cart-count');
-      this.cartButton = document.getElementById('cart-button');
-      this.cartModal = document.getElementById('cart-modal');
-      this.cartItemsList = document.getElementById('cart-items');
-      this.cartEmptyMsg = document.getElementById('cart-empty');
-      this.overlay = document.getElementById('overlay');
-
-      this.attachEventListeners();
-      this.updateCartCount();
-    }
-
-    updateCartCount() {
-      const totalItems = Object.values(this.cart).reduce((sum, item) => sum + item.qty, 0);
-      this.cartCount.textContent = totalItems;
-    }
-
-    renderCart() {
-      this.cartItemsList.innerHTML = '';
-      const keys = Object.keys(this.cart);
-      if (keys.length === 0) {
-        this.cartEmptyMsg.style.display = 'block';
-        return;
-      }
-      this.cartEmptyMsg.style.display = 'none';
-      keys.forEach(id => {
-        const item = this.cart[id];
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <span>${item.name}</span>
-          <span>x${item.qty}</span>
-          <button class="remove-btn" data-id="${id}">&times;</button>
-        `;
-        this.cartItemsList.appendChild(li);
-      });
-    }
-
-    removeFromCart(id) {
-      if (!this.cart[id]) return;
-      this.cart[id].qty--;
-      if (this.cart[id].qty <= 0) {
-        delete this.cart[id];
-      }
-      this.updateCartCount();
-      this.renderCart();
-    }
-
-    attachEventListeners() {
-      this.cartButton.addEventListener('click', () => {
-        const isVisible = this.cartModal.style.display === 'block';
-        this.cartModal.style.display = isVisible ? 'none' : 'block';
-        this.overlay.style.display = isVisible ? 'none' : 'block';
-        if (!isVisible) this.renderCart();
-      });
-
-      this.overlay.addEventListener('click', () => {
-        this.cartModal.style.display = 'none';
-        this.overlay.style.display = 'none';
-      });
-
-      this.cartItemsList.addEventListener('click', e => {
-        if (e.target.classList.contains('remove-btn')) {
-          const id = e.target.dataset.id;
-          this.removeFromCart(id);
-        }
-      });
-    }
-  }
-
-  window.shoppingCart = new ShoppingCart();
-</script>
 
 </body>
 </html>
