@@ -31,6 +31,7 @@
           gap: 20px;
           justify-content: center;
           margin-bottom: 40px;
+          align-items: center;
         }
 
         nav a {
@@ -43,6 +44,29 @@
 
         nav a:hover {
           color: #007BFF;
+        }
+
+        nav span {
+          font-weight: bold;
+          color: #222;
+          font-size: 1.1em;
+          margin-right: 10px;
+        }
+
+        nav button {
+          background-color: #dc3545;
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: bold;
+          font-size: 1em;
+          transition: background-color 0.3s;
+        }
+
+        nav button:hover {
+          background-color: #a71d2a;
         }
 
         h1 {
@@ -113,12 +137,12 @@
     <img src="logo.png" alt="Austria Fishing Logo" />
 </header>
 
-<nav>
+<nav id="navbar">
     <a href="index.html">Shop</a>
     <a href="infos.html">Infos</a>
     <a href="impressum.html">Impressum</a>
     <a href="checkout.html">Warenkorb</a>
-    <a href="login.html">Anmelden / Registrieren</a>
+    <a href="login.html" id="login-link">Anmelden / Registrieren</a>
 </nav>
 
 <h1>Unsere Produkte</h1>
@@ -202,6 +226,57 @@
     }
 
     const shoppingCart = new ShoppingCart();
+
+
+    // Login Status Navbar-Update
+    function updateNavbar() {
+      const navbar = document.getElementById('navbar');
+      const loginLink = document.getElementById('login-link');
+      const loggedInUser = localStorage.getItem("userLoggedIn");
+
+      // Falls schon Benutzer eingeloggt ist:
+      if (loggedInUser) {
+        // Login-Link ausblenden
+        loginLink.style.display = 'none';
+
+        // Falls schon vorhanden, entfernen (für reload-Sicherheit)
+        const existingSpan = document.getElementById('user-email-span');
+        const existingLogoutBtn = document.getElementById('logout-btn');
+        if (existingSpan) existingSpan.remove();
+        if (existingLogoutBtn) existingLogoutBtn.remove();
+
+        // "Angemeldet als ..." Span erstellen
+        const userSpan = document.createElement('span');
+        userSpan.id = 'user-email-span';
+        userSpan.textContent = `Angemeldet als ${loggedInUser}`;
+        userSpan.style.marginLeft = '10px';
+        userSpan.style.marginRight = '10px';
+        userSpan.style.color = '#222';
+
+        // Logout Button erstellen
+        const logoutBtn = document.createElement('button');
+        logoutBtn.id = 'logout-btn';
+        logoutBtn.textContent = 'Abmelden';
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem("userLoggedIn");
+          alert('Sie wurden abgemeldet.');
+          location.reload();
+        });
+
+        navbar.appendChild(userSpan);
+        navbar.appendChild(logoutBtn);
+      } else {
+        // Kein User eingeloggt, Login-Link anzeigen
+        loginLink.style.display = 'inline';
+        // Falls Login-Span oder Logout Button noch da sind, entfernen
+        const existingSpan = document.getElementById('user-email-span');
+        const existingLogoutBtn = document.getElementById('logout-btn');
+        if (existingSpan) existingSpan.remove();
+        if (existingLogoutBtn) existingLogoutBtn.remove();
+      }
+    }
+
+    updateNavbar();
 </script>
 
 </body>
