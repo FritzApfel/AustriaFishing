@@ -154,8 +154,8 @@
   // Warenkorb aus localStorage laden (als Objekt, key = id, value = {name, price, qty})
   let items = JSON.parse(localStorage.getItem("cart") || "{}");
 
-  // Prüfen, ob der Nutzer eingeloggt ist
-  const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
+  // Prüfen, ob der Nutzer eingeloggt ist (existiert ein Wert?)
+  const isLoggedIn = localStorage.getItem("userLoggedIn") !== null;
 
   let total = 0;
   let discounted = false;
@@ -173,6 +173,8 @@
     if (Object.keys(items).length === 0) {
       ul.innerHTML = "<li>Ihr Warenkorb ist leer.</li>";
       discountSection.style.display = "none";
+      loginWarning.style.display = "none";
+      totalEl.textContent = "0 €";
       return;
     }
 
