@@ -23,6 +23,7 @@
       gap: 20px;
       justify-content: center;
       margin-bottom: 30px;
+      flex-wrap: wrap;
     }
 
     nav a {
@@ -32,6 +33,7 @@
       font-size: 1.1em;
       transition: color 0.3s;
     }
+
     nav a:hover {
       color: #007BFF;
     }
@@ -49,16 +51,6 @@
       margin-bottom: 20px;
       color: black;
       line-height: 1.5;
-    }
-
-    a {
-      color: black;
-      font-weight: bold;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    a:hover {
-      color: #007BFF;
     }
 
     #cart-button {
@@ -150,6 +142,8 @@
   <a href="index.html">Shop</a>
   <a href="infos.html">Infos</a>
   <a href="impressum.html">Impressum</a>
+  <a href="checkout.html">Warenkorb</a>
+  <a href="login.html">Anmelden / Registrieren</a>
 </nav>
 
 <h1>Impressum</h1>
@@ -173,13 +167,14 @@
   Fabian Danbauer und Oscar Haider
 </p>
 
-<p><a href="index.html">← Zurück zur Startseite</a></p>
-
+<!-- Warenkorb-Button -->
 <button id="cart-button">
   Warenkorb <span id="cart-count">0</span>
 </button>
 
+<!-- Overlay und Modal -->
 <div id="overlay"></div>
+
 <div id="cart-modal">
   <h3>Warenkorb</h3>
   <ul id="cart-items"></ul>
