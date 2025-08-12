@@ -1,66 +1,52 @@
-// navbar.js
-
 class NavbarManager {
-constructor(navbarId = 'navbar', loginLinkId = 'login-link') {
-this.navbar = document.getElementById(navbarId);
-this.loginLink = document.getElementById(loginLinkId);
-this.userKey = 'userLoggedIn';
+  constructor(navbarId = 'navbar', loginLinkId = 'login-link') {
+    this.navbar = document.getElementById(navbarId);
+    this.loginLink = document.getElementById(loginLinkId);
+    this.userKey = 'userLoggedIn';
+    this.updateNavbar();
+  }
 
-this.init();
-}
+  updateNavbar() {
+    const user = localStorage.getItem(this.userKey);
 
-init() {
-document.addEventListener('DOMContentLoaded', () => this.updateNavbar());
-}
+    // Alte Elemente entfernen
+    this.removeElement('user-email-span');
+    this.removeElement('logout-btn');
 
-isLoggedIn() {
-return !!localStorage.getItem(this.userKey);
-}
+    if (user) {
+      // Login-Link verstecken
+      this.loginLink.style.display = 'none';
 
-getLoggedInUser() {
-return localStorage.getItem(this.userKey);
-}
+      // Benutzername anzeigen
+      const userSpan = document.createElement('span');
+      userSpan.id = 'user-email-span';
+      userSpan.textContent = `Angemeldet als ${user}`;
+      userSpan.style.margin = '0 10px';
 
-logout() {
-localStorage.removeItem(this.userKey);
-alert('Sie wurden abgemeldet.');
-location.reload();
-}
+      // Logout-Button erstellen
+      const logoutBtn = document.createElement('button');
+      logoutBtn.id = 'logout-btn';
+      logoutBtn.textContent = 'Abmelden';
+      logoutBtn.addEventListener('click', () => this.logout());
 
-createUserSpan(email) {
-const span = document.createElement('span');
-span.id = 'user-email-span';
-span.textContent = `Angemeldet als ${email}`;
-span.style.marginLeft = '10px';
-span.style.marginRight = '10px';
-return span;
-}
+      // Elemente ans Navbar anhängen
+      this.navbar.appendChild(userSpan);
+      this.navbar.appendChild(logoutBtn);
 
-createLogoutButton() {
-const btn = document.createElement('button');
-btn.id = 'logout-btn';
-btn.textContent = 'Abmelden';
-btn.addEventListener('click', () => this.logout());
-return btn;
-}
+    } else {
+      // Login-Link anzeigen
+      this.loginLink.style.display = 'inline';
+    }
+  }
 
-clearExistingElements() {
-const oldSpan = document.getElementById('user-email-span');
-const oldBtn = document.getElementById('logout-btn');
-if (oldSpan) oldSpan.remove();
-if (oldBtn) oldBtn.remove();
-}
+  logout() {
+    localStorage.removeItem(this.userKey);
+    alert("Sie wurden abgemeldet.");
+    location.reload();
+  }
 
-updateNavbar() {
-const user = this.getLoggedInUser();
-this.clearExistingElements();
-
-if (user) {
-if (this.loginLink) this.loginLink.style.display = 'none';
-this.navbar.appendChild(this.createUserSpan(user));
-this.navbar.appendChild(this.createLogoutButton());
-} else {
-if (this.loginLink) this.loginLink.style.display = 'inline';
-}
-}
+  removeElement(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
 }
