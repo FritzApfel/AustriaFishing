@@ -1,0 +1,48 @@
+class NavbarManager {
+constructor(navbarId = 'navbar', loginLinkId = 'login-link') {
+this.navbar = document.getElementById(navbarId);
+this.loginLink = document.getElementById(loginLinkId);
+this.userKey = 'userLoggedIn';
+
+this.updateNavbar();
+}
+
+updateNavbar() {
+const user = localStorage.getItem(this.userKey);
+
+// Alte Elemente entfernen
+this.removeElement('user-email-span');
+this.removeElement('logout-btn');
+
+if (user) {
+this.loginLink.style.display = 'none';
+
+const userSpan = document.createElement('span');
+userSpan.id = 'user-email-span';
+userSpan.textContent = `Angemeldet als ${user}`;
+userSpan.style.marginLeft = '10px';
+userSpan.style.marginRight = '10px';
+
+const logoutBtn = document.createElement('button');
+logoutBtn.id = 'logout-btn';
+logoutBtn.textContent = 'Abmelden';
+logoutBtn.addEventListener('click', () => this.logout());
+
+this.navbar.appendChild(userSpan);
+this.navbar.appendChild(logoutBtn);
+} else {
+this.loginLink.style.display = 'inline';
+}
+}
+
+logout() {
+localStorage.removeItem(this.userKey);
+alert("Sie wurden abgemeldet.");
+location.reload();
+}
+
+removeElement(id) {
+const el = document.getElementById(id);
+if (el) el.remove();
+}
+}
