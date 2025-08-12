@@ -151,7 +151,10 @@
 </div>
 
 <script>
+  // Warenkorb aus localStorage laden
   let items = JSON.parse(localStorage.getItem("cart") || "{}");
+
+  // Prüfen, ob der Nutzer eingeloggt ist (Boolean)
   const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
 
   let total = 0;
@@ -161,9 +164,19 @@
   const discountSection = document.getElementById("discount-section");
   const loginWarning = document.getElementById("login-warning");
 
+  // Warenkorb anzeigen
   function renderCart() {
     ul.innerHTML = "";
     total = 0;
+
+    // Wenn keine Artikel, Hinweis anzeigen
+    if (Object.keys(items).length === 0) {
+      ul.innerHTML = "<li>Ihr Warenkorb ist leer.</li>";
+      discountSection.style.display = "none";
+      return;
+    }
+
+    // Artikel auflisten
     for (const id in items) {
       const item = items[id];
       const li = document.createElement("li");
@@ -175,16 +188,20 @@
       ul.appendChild(li);
       total += item.price * item.qty;
     }
+
     totalEl.textContent = total.toFixed(2) + " €";
-    // Falls keine Artikel drin sind:
-    if (Object.keys(items).length === 0) {
-      ul.innerHTML = "<li>Ihr Warenkorb ist leer.</li>";
-      discountSection.style.display = "none";
-    } else if (isLoggedIn) {
+
+    // Rabatt- & Bezahlbereich nur anzeigen, wenn eingeloggt
+    if (isLoggedIn) {
       discountSection.style.display = "block";
+      loginWarning.style.display = "none";
+    } else {
+      discountSection.style.display = "none";
+      loginWarning.style.display = "block";
     }
   }
 
+  // Artikel löschen
   function deleteItem(id) {
     if (items[id]) {
       delete items[id];
@@ -193,6 +210,7 @@
     }
   }
 
+  // Klick-Listener für Löschen-Buttons
   ul.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete-item")) {
       const id = e.target.getAttribute("data-id");
@@ -200,6 +218,7 @@
     }
   });
 
+  // Rabattcode anwenden
   function applyDiscount() {
     const code = document.getElementById("code").value.trim().toLowerCase();
     if (code === "summer1" && total > 0 && !discounted) {
@@ -214,7 +233,13 @@
     totalEl.textContent = total.toFixed(2) + " €";
   }
 
+  // Checkout-Prozess
   function checkout() {
+    if (!isLoggedIn) {
+      alert("Bitte melden Sie sich zuerst an.");
+      window.location.href = "login.html";
+      return;
+    }
     if (Object.keys(items).length === 0) {
       alert("Ihr Warenkorb ist leer.");
       return;
@@ -224,15 +249,7 @@
     window.location.href = "index.html";
   }
 
-  // Initiales Rendering
-  if (isLoggedIn) {
-    discountSection.style.display = "block";
-    loginWarning.style.display = "none";
-  } else {
-    discountSection.style.display = "none";
-    loginWarning.style.display = "block";
-  }
-
+  // Initial render
   renderCart();
 </script>
 
